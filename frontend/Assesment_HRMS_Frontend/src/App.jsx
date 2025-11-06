@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext.jsx';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import AddEmployeePage from './pages/AddEmployeePage';
+import AddEmployeePage from './pages/AddEmployeePage.jsx';
 import ManageEmployeePage from './pages/ManageEmployeePage';
-import ApprovalPage from './pages/ApprovalPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import ApprovalPage from './pages/ApprovalPage.jsx';
+import ProtectedRoute from './componets/ProtectedRoute.jsx';
 import './App.css';
 
 function App() {
