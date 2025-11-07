@@ -17,7 +17,7 @@ async function generateEmployeeId() {
   return `EMP_${String(nextNumber).padStart(3, "0")}`;
 }
 
-// 🔹 LOGIN FUNCTION (same as before)
+//  LOGIN FUNCTION 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -52,7 +52,7 @@ export const login = async (req, res) => {
   }
 };
 
-// 🔹 ADD EMPLOYEE API (frontend: /api/addEmploye)
+//  ADD EMPLOYEE API 
 export const addEmploye = async (req, res) => {
   try {
     let {
@@ -95,7 +95,7 @@ export const addEmploye = async (req, res) => {
   }
 };
 
-// 🔹 GET ALL EMPLOYEES
+//  GET ALL EMPLOYEES
 export const employes = async (req, res) => {
   try {
     const employes = await Employe.find();
@@ -105,7 +105,7 @@ export const employes = async (req, res) => {
   }
 };
 
-// 🔹 UPDATE EMPLOYEE
+//  UPDATE EMPLOYEE
 export const updateEmploye = async (req, res) => {
   try {
     const employeId = req.params.id;
@@ -135,7 +135,7 @@ export const updateEmploye = async (req, res) => {
   }
 };
 
-// 🔹 DELETE EMPLOYEE
+//  DELETE EMPLOYEE
 export const deleteEmploye = async (req, res) => {
   try {
     const employeId = req.params.id;

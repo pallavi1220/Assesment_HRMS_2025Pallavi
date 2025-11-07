@@ -57,12 +57,12 @@ const AddEmployeePage = () => {
     try {
       const token = localStorage.getItem('authToken');
 
-      // 🔹 Split full name into firstName and lastName
+      //  Split full name into firstName and lastName
       const nameParts = formData.name.trim().split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      // 🔹 Prepare data for backend
+      //  Prepare data for backend
       const payload = {
         firstName,
         lastName,
@@ -72,7 +72,7 @@ const AddEmployeePage = () => {
         dateOfJoining: formData.doj,
       };
 
-      // 🔹 Correct API endpoint — make sure backend has this route
+      //  Correct API endpoint — make sure backend has this route
       const response = await axios.post('http://localhost:8000/api/addEmploye', payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -92,7 +92,7 @@ const AddEmployeePage = () => {
     } catch (error) {
       console.error('Backend Error:', error);
 
-      // 🔹 Fallback: Save locally if backend is down
+      //  Fallback: Save locally if backend is down
       alert('Backend unavailable. Saving locally...');
 
       const employees = JSON.parse(localStorage.getItem('employees') || '[]');
