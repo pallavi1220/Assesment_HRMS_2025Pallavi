@@ -19,17 +19,17 @@ const ImageCarousel = () => {
     return () => clearInterval(timer);
   }, [images.length]);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % images.length);
-  };
+  // const nextSlide = () => {
+  //   setCurrentSlide((prev) => (prev + 1) % images.length);
+  // };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
-  };
+  // const prevSlide = () => {
+  //   setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+  // };
 
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+  // const goToSlide = (index) => {
+  //   setCurrentSlide(index);
+  // };
 
   return (
     <div className="image-carousel">
@@ -58,15 +58,15 @@ const ImageCarousel = () => {
           ))}
         </div>
         
-        <button className="carousel-btn prev" onClick={prevSlide}>
+        {/* <button className="carousel-btn prev" onClick={prevSlide}>
           <i className="fas fa-chevron-left"></i>
         </button>
         <button className="carousel-btn next" onClick={nextSlide}>
           <i className="fas fa-chevron-right"></i>
-        </button>
+        </button> */}
       </div>
       
-      <div className="carousel-dots">
+      {/* <div className="carousel-dots">
         {images.map((_, index) => (
           <button
             key={index}
@@ -74,7 +74,7 @@ const ImageCarousel = () => {
             onClick={() => goToSlide(index)}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

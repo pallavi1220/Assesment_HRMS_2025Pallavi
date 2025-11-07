@@ -1,125 +1,160 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Header from '../componets/Header';
 import Footer from '../componets/Footer';
 import './css/ManageEmployeePage.css';
 
-const ManageEmployeePage = ({ employees }) => {
-    const [selectedDept, setSelectedDept] = useState('All');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // ek page par 3 employees
+const ManageEmployeePage = () => {
+  const [employees, setEmployees] = useState([]);
+  const [selectedDept, setSelectedDept] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const itemsPerPage = 5;
 
-    // Dummy data for employees
-    const dummyEmployees = [
-        { sr: 1, name: 'Ashish Sharma', code: 'EMP001', dept: 'IT', proj: 'Project A' },
-        { sr: 2, name: 'Priya Singh', code: 'EMP002', dept: 'HR', proj: 'Project B' },
-        { sr: 3, name: 'Rahul Jain', code: 'EMP003', dept: 'IT', proj: 'Project C' },
-        { sr: 4, name: 'Anjali Gupta', code: 'EMP004', dept: 'MK', proj: 'Project D' },
-        { sr: 5, name: 'Vikram Yadav', code: 'EMP005', dept: 'HR', proj: 'Project A' },
-    ];
-
-    const filteredEmployees = selectedDept === 'All'
-        ? dummyEmployees
-        : dummyEmployees.filter(emp => emp.dept === selectedDept);
-
-    const departments = ['All', ...new Set(dummyEmployees.map(emp => emp.dept))];
-
-    // Pagination calculation
-    const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedEmployees = filteredEmployees.slice(startIndex, startIndex + itemsPerPage);
-
-    // Placeholder functions for button actions
-    const handleUpdate = (employeeCode) => {
-        console.log(`Update action triggered for employee: ${employeeCode}`);
+  // 🔹 Fetch employees from backend
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/employes');
+        setEmployees(response.data);
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+        alert('Failed to load employees. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleDelete = (employeeCode) => {
-        console.log(`Delete action triggered for employee: ${employeeCode}`);
-    };
+    fetchEmployees();
+  }, []);
 
-    // Dept change par hamesha first page se start ho
-    const handleDeptChange = (e) => {
-        setSelectedDept(e.target.value);
-        setCurrentPage(1);
-    };
+  // 🔹 Handle delete
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this employee?')) return;
 
-    return (
-        <div className="container">
-            <Header />
-            <main className="manage-employee-main">
-                <div className="manage-employee-box">
-                    <h2>MANAGE EMPLOYEE</h2>
+    try {
+      await axios.delete(`http://localhost:8000/api/employe/${id}`);
+      alert('Employee deleted successfully!');
+      setEmployees((prev) => prev.filter((emp) => emp._id !== id));
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      alert('Failed to delete employee.');
+    }
+  };
 
-                    {/* Department Filter */}
-                    <div className="filter-container">
-                        <label htmlFor="dept-select">Select Dept.</label>
-                        <select id="dept-select" value={selectedDept} onChange={handleDeptChange}>
-                            {departments.map((dept, index) => (
-                                <option key={index} value={dept}>{dept}</option>
-                            ))}
-                        </select>
-                    </div>
+  // 🔹 Handle update (simple example, navigate to edit page or inline edit later)
+  const handleUpdate = async (id) => {
+    const newDept = prompt('Enter new department name:');
+    if (!newDept) return;
 
-                    {/* Employee Table */}
-                    <div className="employee-table-container">
-                        <table className="employee-table">
-                            <thead>
-                                <tr>
-                                    <th>Sr.</th>
-                                    <th>Name</th>
-                                    <th>Code</th>
-                                    <th>Dept.</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {paginatedEmployees.map(emp => (
-                                    <tr key={emp.code}>
-                                        <td>{emp.sr}</td>
-                                        <td>{emp.name}</td>
-                                        <td>{emp.code}</td>
-                                        <td>{emp.dept}</td>
-                                        <td className="action-buttons">
-                                            <button className="update-btn" onClick={() => handleUpdate(emp.code)}>✏️</button>
-                                            <button className="delete-btn" onClick={() => handleDelete(emp.code)}>🗑️</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+    try {
+      const response = await axios.put(`http://localhost:8000/api/employe/${id}`, {
+        department: newDept,
+      });
+      alert('Employee updated successfully!');
+      setEmployees((prev) =>
+        prev.map((emp) => (emp._id === id ? response.data.employe : emp))
+      );
+    } catch (error) {
+      console.error('Error updating employee:', error);
+      alert('Failed to update employee.');
+    }
+  };
 
-                    {/* Pagination */}
-                    <div className="pagination">
-                        <button 
-                            disabled={currentPage === 1} 
-                            onClick={() => setCurrentPage(prev => prev - 1)}
-                        >
-                            &lt;
-                        </button>
+  // 🔹 Filtering by department
+  const departments = ['All', ...new Set(employees.map((emp) => emp.department || ''))];
+  const filteredEmployees =
+    selectedDept === 'All'
+      ? employees
+      : employees.filter((emp) => emp.department === selectedDept);
 
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-                            <button
-                                key={num}
-                                className={currentPage === num ? "active" : ""}
-                                onClick={() => setCurrentPage(num)}
-                            >
-                                {num}
-                            </button>
-                        ))}
+  // 🔹 Pagination
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedEmployees = filteredEmployees.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
-                        <button 
-                            disabled={currentPage === totalPages} 
-                            onClick={() => setCurrentPage(prev => prev + 1)}
-                        >
-                            &gt;
-                        </button>
-                    </div>
-                </div>
-            </main>
-            <Footer />
+  if (loading) return <p>Loading employees...</p>;
+
+  return (
+    <div className="container">
+      <Header />
+      <main className="manage-employee-main">
+        <div className="manage-employee-box">
+          <h2>MANAGE EMPLOYEE</h2>
+
+          {/* Department Filter */}
+          <div className="filter-container">
+            <label htmlFor="dept-select">Select Dept.</label>
+            <select id="dept-select" value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)}>
+              {departments.map((dept, index) => (
+                <option key={index} value={dept}>{dept || 'Unassigned'}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Employee Table */}
+          <div className="employee-table-container">
+            <table className="employee-table">
+              <thead>
+                <tr>
+                  <th>Sr.</th>
+                  <th>Name</th>
+                  <th>Emp ID</th>
+                  <th>Dept.</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedEmployees.map((emp, index) => (
+                  <tr key={emp._id}>
+                    <td>{startIndex + index + 1}</td>
+                    <td>{`${emp.firstName} ${emp.lastName}`}</td>
+                    <td>{emp.employeId}</td>
+                    <td>{emp.department || 'N/A'}</td>
+                    <td className="action-buttons">
+                      <button className="update-btn" onClick={() => handleUpdate(emp._id)}>✏️</button>
+                      <button className="delete-btn" onClick={() => handleDelete(emp._id)}>🗑️</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="pagination">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              &lt;
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                className={currentPage === num ? 'active' : ''}
+                onClick={() => setCurrentPage(num)}
+              >
+                {num}
+              </button>
+            ))}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              &gt;
+            </button>
+          </div>
         </div>
-    );
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default ManageEmployeePage;

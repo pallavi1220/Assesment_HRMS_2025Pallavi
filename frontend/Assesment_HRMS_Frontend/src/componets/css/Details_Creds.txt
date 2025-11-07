@@ -1,0 +1,7 @@
+We made the header fixed at the top using 
+CSS (position: fixed;, z-index, and margin-top on body) so it stays visible 
+while the page content scrolls smoothly underneath.
+
+“I made the footer fixed at the bottom using position: 
+fixed and added bottom margin in the body to prevent content overlap, ensuring the navigation 
+bar stays visible while scrolling.”

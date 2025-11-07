@@ -8,12 +8,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed; /* Fixed position */
-  bottom: 0; /* Align to the bottom of the viewport */
+  position: fixed; /* ✅ Keeps footer fixed at bottom */
+  bottom: 0;
   left: 0;
-  z-index: 1000; /* Ensure it stays on top of other content */
+  z-index: 1000; /* ✅ Keeps it above other content */
 }
 
+/* Footer Navigation */
 .footer-nav {
   display: flex;
   justify-content: space-around;
@@ -22,7 +23,7 @@
   max-width: 600px;
 }
 
-/* NavLink is an anchor tag, so we target a */
+/* NavLink (anchor tag) styles */
 .footer-nav a {
   display: flex;
   flex-direction: column;
@@ -34,19 +35,19 @@
   transition: all 0.3s ease;
   padding: 5px;
   border-radius: 8px;
-  opacity: 0.6; /* Default opacity for non-active icons */
+  opacity: 0.6;
 }
 
 .footer-nav a:hover {
   opacity: 1;
 }
 
-/* This targets the 'active' class added automatically by NavLink */
 .footer-nav a.active {
-  color: #ff6347; /* Orange color for the active icon */
+  color: #ff6347;
   opacity: 1;
 }
 
+/* Icons and text */
 .footer-icon {
   font-size: 24px;
   margin-bottom: 5px;
@@ -58,14 +59,13 @@
   letter-spacing: 0.5px;
 }
 
-/* Media query for all screen sizes */
+/* Mobile responsiveness */
 @media (max-width: 768px) {
   .footer-nav {
-    max-width: 100%; /* Use full width on mobile */
+    max-width: 100%;
   }
 }
 
-/* Specific styling for very small mobile screens */
 @media (max-width: 480px) {
   .footer {
     padding: 8px 0;
@@ -86,21 +86,7 @@
   }
 }
 
-/* Footer.css */
-/* ... existing styles ... */
-
-.footer {
-  width: 100%;
-  background: rgba(44, 62, 80, 0.9);
-  padding: 10px 0;
-  border-top: 2px solid #e74c3c;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed; /* Fixed position so it's always visible */
-  bottom: 0; /* Aligned to the bottom */
-  left: 0;
-  z-index: 1000; /* Ensure it stays on top of other content */
+/*  Add margin-bottom to main content so footer doesn't overlap */
+body {
+  margin-bottom: 70px; /* Adjust based on footer height */
 }
-
-/* ... rest of the code is the same ... */
