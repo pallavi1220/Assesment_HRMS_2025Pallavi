@@ -4,17 +4,22 @@ import Employe from "../Model/employe.js";
 function generatePassword() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
-
-// Generate employee ID like EMP_001, EMP_002, ...
+// Generate employee ID like OSYYMM001 (auto incremental)
 async function generateEmployeeId() {
-  const lastEmployee = await Employe.findOne().sort({ _id: -1 });
-  let nextNumber = 1;
-  if (lastEmployee) {
-    const lastId = lastEmployee.employeId;
-    const lastNum = parseInt(lastId.split("_")[1]);
-    nextNumber = lastNum + 1;
-  }
-  return `EMP_${String(nextNumber).padStart(3, "0")}`;
+  const now = new Date();
+  const year = now.getFullYear().toString().slice(-2); // last 2 digits of year
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // 2-digit month
+
+  // Count total employees from DB
+  const totalEmployees = await Employe.countDocuments();
+
+  // Increment by 1 for next ID
+  const nextNumber = totalEmployees + 1;
+
+  // Format: OSYYMM001
+  const empCode = `OS${year}${month}${String(nextNumber).padStart(3, "0")}`;
+
+  return empCode;
 }
 
 //  LOGIN FUNCTION 
