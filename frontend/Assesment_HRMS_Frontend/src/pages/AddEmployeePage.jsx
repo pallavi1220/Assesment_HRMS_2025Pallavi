@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API from '../axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../componets/Header';
 import Footer from '../componets/Footer';
@@ -73,7 +74,7 @@ const AddEmployeePage = () => {
       };
 
       //  Correct API endpoint — make sure backend has this route
-      const response = await axios.post('http://localhost:8000/api/addEmploye', payload, {
+      const response = await API.post('/addEmploye', payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API from '../axios';
 import Header from '../componets/Header';
 import Footer from '../componets/Footer';
 import './css/ManageEmployeePage.css';
@@ -15,7 +16,7 @@ const ManageEmployeePage = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/employes');
+        const response = await API.get('/employes');
         setEmployees(response.data);
       } catch (error) {
         console.error('Error fetching employees:', error);
@@ -33,7 +34,7 @@ const ManageEmployeePage = () => {
     if (!window.confirm('Are you sure you want to delete this employee?')) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/employe/${id}`);
+      await API.delete(`/employe/${id}`);
       alert('Employee deleted successfully!');
       setEmployees((prev) => prev.filter((emp) => emp._id !== id));
     } catch (error) {
@@ -48,7 +49,7 @@ const ManageEmployeePage = () => {
     if (!newDept) return;
 
     try {
-      const response = await axios.put(`http://localhost:8000/api/employe/${id}`, {
+      const response = await API.put(`/employe/${id}`, {
         department: newDept,
       });
       alert('Employee updated successfully!');

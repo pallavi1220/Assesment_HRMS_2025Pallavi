@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from '../axios';
 import axios from 'axios'; // ✅ Axios import karein
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -25,7 +26,7 @@ const LoginPage = () => {
 
         try {
             // BACKEND LOGIN API CALL
-            const response = await axios.post('http://localhost:8000/api/login', {
+            const response = await API.post('/login', {
                 email: loginId,
                 password: password,
             });
