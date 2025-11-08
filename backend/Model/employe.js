@@ -12,8 +12,7 @@ firstName: {
   },
   email: {
     type: String,
-    required: true,
-    unique: true
+    
   },
   password: {
     type: String,
@@ -40,14 +39,7 @@ firstName: {
     type: Date,
     required: true,
   },
-  addedBy: {
-    type: String,
-    default: "HR",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+ 
   
 
   

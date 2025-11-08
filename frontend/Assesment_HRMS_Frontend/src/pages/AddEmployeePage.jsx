@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import API from '../axios';
 import { useNavigate } from 'react-router-dom';
+import API from '../axios';
 import Header from '../componets/Header';
 import Footer from '../componets/Footer';
 import './css/AddEmployeePage.css';
@@ -40,15 +39,14 @@ const AddEmployeePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate login
     if (localStorage.getItem('isLoggedIn') !== 'true' || localStorage.getItem('role') !== 'HR') {
       alert("Session expired. Please login again.");
       navigate('/login');
       return;
     }
 
-    // Validate form
-    if (!formData.name || !formData.code || !formData.doj || !formData.dept || !formData.proj) {
+    // Validate form inputs
+    if (!formData.name || !formData.doj || !formData.dept || !formData.proj) {
       alert('Please fill in all fields');
       return;
     }
@@ -58,69 +56,50 @@ const AddEmployeePage = () => {
     try {
       const token = localStorage.getItem('authToken');
 
-      //  Split full name into firstName and lastName
+      // Split full name into first and last name
       const nameParts = formData.name.trim().split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      //  Prepare data for backend
+      // Generate random 6-digit password
+      const generatedPassword = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // Prepare payload for backend
       const payload = {
         firstName,
         lastName,
-        employeId: formData.code,
+        employeId: formData.code || '', // backend will auto-generate if empty
+        password: generatedPassword,
         department: formData.dept,
         project: formData.proj,
         dateOfJoining: formData.doj,
       };
 
-      //  Correct API endpoint — make sure backend has this route
+      // Send data to backend
       const response = await API.post('/addEmploye', payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        timeout: 10000, // 10-second timeout
       });
 
       if (response.data.success) {
-        alert('Employee added to database successfully!');
+        alert(
+          `✅Employee added successfully!\n\n` +
+          `Employee ID: ${response.data.employe.employeId}\n` +
+          `Password: ${generatedPassword}`
+        );
+
+        // Reset form and redirect
         setFormData({ name: '', code: '', doj: '', dept: '', proj: '' });
         navigate('/manage-employee');
       } else {
-        throw new Error('Backend response not successful');
+        throw new Error(response.data.message || 'Backend failed');
       }
 
     } catch (error) {
       console.error('Backend Error:', error);
-
-      //  Fallback: Save locally if backend is down
-      alert('Backend unavailable. Saving locally...');
-
-      const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-      const nextSr = employees.length > 0 ? Math.max(...employees.map(emp => emp.sr || 0)) + 1 : 1;
-
-      const nameParts = formData.name.trim().split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-
-      const newEmployee = {
-        sr: nextSr,
-        firstName,
-        lastName,
-        code: formData.code,
-        dept: formData.dept,
-        proj: formData.proj,
-        doj: formData.doj,
-        addedDate: new Date().toISOString(),
-        addedBy: 'HR',
-      };
-
-      employees.push(newEmployee);
-      localStorage.setItem('employees', JSON.stringify(employees));
-
-      alert('Employee saved locally!');
-      setFormData({ name: '', code: '', doj: '', dept: '', proj: '' });
-      navigate('/manage-employee');
+      alert(' Error adding employee. Please check console or try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -155,8 +134,7 @@ const AddEmployeePage = () => {
                 name="code"
                 value={formData.code}
                 onChange={handleChange}
-                required
-                placeholder="Enter employee code"
+                placeholder="Enter employee code (optional)"
               />
             </div>
 
@@ -199,7 +177,7 @@ const AddEmployeePage = () => {
             </div>
 
             <button type="submit" className="add-emp-btn" disabled={isLoading}>
-              {isLoading ? 'Saving to Database...' : 'ADD EMP'}
+              {isLoading ? 'Saving to Database...' : 'ADD EMPLOYEE'}
             </button>
           </form>
         </div>
